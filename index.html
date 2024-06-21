@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4 Digit Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #212121;
+            color: white;
+        }
+        .pincode-container {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .pincode-text {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 100%;
+            max-width: 200px;
+            margin-right: 10px;
+            background-color: #fff;
+            color: #000;
+            font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif 
+        }
+        .expired {
+            color: red;
+            background-color: #141414;
+        }
+        .copy-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            color: white;
+        }
+        .copy-icon:hover {
+            fill: #4CAF50;
+        }
+        h1 {
+            font-size: 2em;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pin Code List</h1>
+    <div id="pincode-list">
+        <!-- Pin code containers will be appended here by JavaScript -->
+    </div>
+
+    <script>
+        const pincodeList = document.getElementById('pincode-list');
+        const currentDate = new Date(); // Set the current date to 2024-06-22
+
+        // Fetch pin codes from the JSON file
+        fetch('https://raw.githubusercontent.com/spacetoonlinks/hosting/main/randompincodes.json')
+            .then(response => response.json())
+            .then(data => {
+                data.pincodes.forEach(item => {
+                    const pincodeDate = new Date(item.date);
+                    const pincodeContainer = document.createElement('div');
+                    pincodeContainer.className = 'pincode-container';
+
+                    const pincodeText = document.createElement('input');
+                    pincodeText.type = 'text';
+                    pincodeText.className = 'pincode-text';
+                    pincodeText.value = `Date: ${item.date}, Pin Code: ${item.pincode}`;
+                    pincodeText.readOnly = true;
+
+                    // Check if the pin code date has expired
+                    if (pincodeDate < currentDate) {
+                        pincodeText.classList.add('expired');
+                        pincodeText.title = 'Expired Pin Code';
+                    }
+
+                    const copyIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    copyIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    copyIcon.setAttribute('width', '24');
+                    copyIcon.setAttribute('height', '24');
+                    copyIcon.setAttribute('fill', 'none');
+                    copyIcon.setAttribute('viewBox', '0 0 24 24');
+                    copyIcon.classList.add('copy-icon');
+                    copyIcon.innerHTML = '<path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path>';
+
+                    copyIcon.addEventListener('click', () => copyToClipboard(item.pincode));
+
+                    pincodeContainer.appendChild(pincodeText);
+                    pincodeContainer.appendChild(copyIcon);
+
+                    pincodeList.appendChild(pincodeContainer);
+                });
+            })
+            .catch(error => console.error('Error fetching pin codes:', error));
+
+        function copyToClipboard(pincode) {
+            // Create a temporary input element
+            const tempInput = document.createElement('input');
+            tempInput.value = pincode;
+            document.body.appendChild(tempInput);
+
+            // Select the input value and copy it to the clipboard
+            tempInput.select();
+            document.execCommand('copy');
+
+            // Remove the temporary input element
+            document.body.removeChild(tempInput);
+
+            // Notify the user
+            alert('Copied: ' + pincode);
+        }
+    </script>
+</body>
+</html>
