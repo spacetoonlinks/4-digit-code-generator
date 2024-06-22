@@ -24,7 +24,7 @@
             margin-right: 10px;
             background-color: #fff;
             color: #000;
-            font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif 
+            font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
         }
         .expired {
             color: red;
@@ -53,7 +53,10 @@
 
     <script>
         const pincodeList = document.getElementById('pincode-list');
-        const currentDate = new Date(); // Set the current date to 2024-06-22
+
+        // Get the current date in Jeddah time zone
+        const currentDate = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Riyadh"}));
+        currentDate.setHours(0, 0, 0, 0);  // Zero out the time portion
 
         // Fetch pin codes from the JSON file
         fetch('https://raw.githubusercontent.com/spacetoonlinks/hosting/main/randompincodes.json')
@@ -61,6 +64,7 @@
             .then(data => {
                 data.pincodes.forEach(item => {
                     const pincodeDate = new Date(item.date);
+                    pincodeDate.setHours(0, 0, 0, 0);  // Zero out the time portion
                     const pincodeContainer = document.createElement('div');
                     pincodeContainer.className = 'pincode-container';
 
